@@ -1,0 +1,103 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Skip validation for merge commits
+if grep -qE "^Merge (branch|pull request)" "$1"; then
+	echo "✅ Merge commit detected, skipping validation"
+	exit 0
+fi
+
+# Read the commit message
+commit_msg=$(cat "$1")
+
+# Define repo-wide types that don't need MFE scope
+repo_wide_types="docs|style|test|chore|perf|ci|build|revert"
+
+# Check if it's a repo-wide commit (no scope required)
+if echo "$commit_msg" | grep -qE "^($repo_wide_types): .{1,72}$"; then
+	echo "✅ Repo-wide commit message format is valid!"
+	exit 0
+fi
+
+# For other types, require MFE scope (supports comma-separated MFEs)
+mfe_commit_regex='^(feat|fix|refactor)(\([a-zA-Z0-9_,-]+\))!?: .{1,72}$'
+
+if ! echo "$commit_msg" | grep -qE "$mfe_commit_regex"; then
+	echo "❌ Commit message format is invalid!
+
+Your commit message must follow the MFE-specific Conventional Commits format:
+  <type>(MFE-name): <subject>
+
+For changes affecting specific MFEs:
+  feat(shell): add new navigation component
+  fix(studio): resolve audio sync issue
+  refactor(editor): improve timeline performance
+
+For repo-wide changes (no scope needed):
+  docs: update README with new setup instructions
+  chore: upgrade dependencies
+  ci: update deployment pipeline
+
+Breaking changes:
+  feat(shell)!: breaking change to navigation API
+
+Types requiring MFE scope: feat, fix, refactor
+Types for repo-wide changes: docs, style, test, chore, perf, ci, build, revert
+
+Subject must be max 72 characters, present tense, and not end with a period."
+	exit 1
+fi
+
+# Extract MFE names from scope (supports comma-separated list)
+mfe_scope=$(echo "$commit_msg" | sed -n 's/^[^(]*(\([^)]*\)).*/\1/p')
+
+if [ -z "$mfe_scope" ]; then
+	echo "❌ Could not extract MFE scope from commit message"
+	exit 1
+fi
+
+# Get valid MFE names from apps directory
+valid_mfes=$(find apps -maxdepth 1 -type d -not -name "apps" | sed 's|apps/||' | tr '\n' ' ')
+
+# Validate each MFE name in comma-separated list
+invalid_mfes=""
+echo "$mfe_scope" | tr ',' '\n' | while IFS= read -r mfe_name; do
+	# Trim whitespace
+	mfe_name=$(echo "$mfe_name" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+	if [ -z "$mfe_name" ]; then
+		echo "❌ Empty MFE name found in scope"
+		exit 1
+	fi
+
+	# Check if the MFE name is valid
+	if ! echo "$valid_mfes" | grep -qw "$mfe_name"; then
+		invalid_mfes="$invalid_mfes $mfe_name"
+	fi
+done
+
+# Since the while loop runs in a subshell, we need to re-validate
+for mfe_name in $(echo "$mfe_scope" | tr ',' ' '); do
+	# Trim whitespace
+	mfe_name=$(echo "$mfe_name" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+	if [ -z "$mfe_name" ]; then
+		echo "❌ Empty MFE name found in scope"
+		exit 1
+	fi
+
+	# Check if the MFE name is valid
+	if ! echo "$valid_mfes" | grep -qw "$mfe_name"; then
+		echo "❌ Invalid MFE name: '$mfe_name'
+
+Valid MFE names: $valid_mfes
+
+Examples:
+  feat(shell): add new navigation component
+  fix(studio,editor): resolve sync issue across MFEs
+  refactor(shell,studio): improve shared components"
+		exit 1
+	fi
+done
+
+echo "✅ MFE-specific commit message format is valid!"

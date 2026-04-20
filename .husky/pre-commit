@@ -1,0 +1,55 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Disable Nx interactive mode and daemon for hooks
+export NX_DAEMON=false
+export NX_INTERACTIVE=false
+export CI=true
+
+# Skip all hooks if HUSKY=0
+if [ "$HUSKY" = "0" ]; then
+	echo "⚠️  Husky hooks are disabled (HUSKY=0)"
+	exit 0
+fi
+
+# TypeScript checks
+if [ "$SKIP_TYPECHECK" != "1" ]; then
+	echo "🔍 Running TypeScript checks on affected files..."
+
+	# Run TypeScript check on affected projects
+	pnpm nx affected --target=typecheck --base=HEAD~1 --head=HEAD
+
+	# Capture the exit code
+	TYPECHECK_EXIT_CODE=$?
+
+	if [ $TYPECHECK_EXIT_CODE -ne 0 ]; then
+		echo "❌ TypeScript errors found! Please fix them before committing."
+		echo "💡 To skip: SKIP_TYPECHECK=1 git commit"
+		exit 1
+	fi
+
+	echo "✅ TypeScript checks passed!"
+else
+	echo "⚠️  Skipping TypeScript checks (SKIP_TYPECHECK=1)"
+fi
+
+# Linting checks
+if [ "$SKIP_LINT" != "1" ]; then
+	echo "🔍 Running linting on affected files..."
+	pnpm lint-staged
+
+	LINT_EXIT_CODE=$?
+
+	if [ $LINT_EXIT_CODE -ne 0 ]; then
+		echo "❌ Linting errors found! Please fix them before committing."
+		echo "💡 To skip: SKIP_LINT=1 git commit"
+		exit 1
+	fi
+
+	echo "✅ Linting checks passed!"
+else
+	echo "⚠️  Skipping lint checks (SKIP_LINT=1)"
+fi
+
+echo "✅ All checks passed! Proceeding with commit..."
+

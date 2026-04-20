@@ -1,0 +1,50 @@
+{
+    "baseDir": "./",
+    "files": [
+        {
+            "path": "apps/shell/dist/**/*.js",
+            "maxSize": "800kb",
+            "maxPercentIncrease": 10,
+            "compression": "gzip"
+        },
+        {
+            "path": "apps/shell/dist/**/*.css",
+            "maxSize": "100kb",
+            "maxPercentIncrease": 15,
+            "compression": "gzip"
+        },
+        {
+            "path": "apps/studio/dist/**/*.js",
+            "maxSize": "600kb",
+            "maxPercentIncrease": 10,
+            "compression": "gzip"
+        },
+        {
+            "path": "apps/studio/dist/**/*.css",
+            "maxSize": "80kb",
+            "maxPercentIncrease": 15,
+            "compression": "gzip"
+        },
+        {
+            "path": "apps/editor/dist/**/*.js",
+            "maxSize": "500kb",
+            "maxPercentIncrease": 10,
+            "compression": "gzip"
+        },
+        {
+            "path": "apps/editor/dist/**/*.css",
+            "maxSize": "60kb",
+            "maxPercentIncrease": 15,
+            "compression": "gzip"
+        }
+    ],
+    "ci": {
+        "trackBranches": [
+            "main"
+        ],
+        "commitStatus": false,
+        "reportCommentType": "none"
+    },
+    "defaultCompression": "gzip",
+    "verbose": true
+}

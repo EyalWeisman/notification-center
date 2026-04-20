@@ -1,0 +1,42 @@
+{
+	"editor": {
+		"latest": {
+			"version": "0.0.0",
+			"buildTime": "2025-01-31T12:00:00Z",
+			"remoteEntryUrl": "http://localhost:4200",
+			"commitHash": "dev"
+		},
+		"rollback": {
+			"version": "0.0.0",
+			"buildTime": "2025-01-31T12:00:00Z",
+			"commitHash": "dev"
+		}
+	},
+	"studio": {
+		"latest": {
+			"version": "0.0.0",
+			"buildTime": "2025-01-31T12:00:00Z",
+			"remoteEntryUrl": "http://localhost:4001",
+			"commitHash": "dev"
+		},
+		"rollback": {
+			"version": "0.0.0",
+			"buildTime": "2025-01-31T12:00:00Z",
+			"commitHash": "dev"
+		}
+	},
+	"mfe": {
+		"latest": {
+			"version": "0.0.0",
+			"remoteEntryUrl": "http://localhost:4300",
+			"buildTime": "2025-01-31T12:00:00Z",
+			"commitHash": "dev"
+		},
+		"rollback": {
+			"version": "0.0.0",
+			"remoteEntryUrl": "http://localhost:4000",
+			"buildTime": "2025-01-31T12:00:00Z",
+			"commitHash": "dev"
+		}
+	}
+}

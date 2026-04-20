@@ -1,0 +1,20 @@
+# Husky Configuration
+
+# To skip hooks temporarily, use:
+# HUSKY=0 git commit -m "message"
+# or
+# git commit -m "message" --no-verify
+
+# You can also disable specific hooks by setting environment variables:
+
+# Pre-commit hooks (only runs on affected files):
+# SKIP_TYPECHECK=1 git commit -m "message"
+# SKIP_LINT=1 git commit -m "message"
+
+# Pre-push hooks (runs on all/affected projects):
+# SKIP_TYPECHECK=1 git push  # Skip TypeScript checks
+# SKIP_LINT=1 git push       # Skip linting checks
+# SKIP_TESTS=1 git push      # Skip test execution
+
+# Combine multiple skips:
+# SKIP_TYPECHECK=1 SKIP_TESTS=1 git push

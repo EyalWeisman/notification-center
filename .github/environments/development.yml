@@ -1,0 +1,82 @@
+# Development Environment Configuration
+# This file documents the required environment variables for the development environment
+# DO NOT PUT ACTUAL SECRET VALUES IN THIS FILE
+
+environment:
+  name: development
+  url: https://dev.riverside.fm
+  
+description: |
+  Development environment for testing new features and changes.
+  Auto-deploys from the 'develop' branch.
+
+# Required GitHub Secrets (sensitive values)
+required_secrets:
+  - IFRAME_SESSION_SUPPORTED
+  - REACT_APP_ABTEST_API_BASE_URL
+  - REACT_APP_API_GATEWAY_URL
+  - REACT_APP_API_GQL_URL
+  - REACT_APP_BE_ZENDESK_TOKEN
+  - REACT_APP_CENTRIFUGO_ENDPOINT
+  - REACT_APP_DEFERRED_LINK_URL
+  - REACT_APP_DIALOGER_API
+  - REACT_APP_DIALOGER_CHAT_API
+  - REACT_APP_EDIT_CAMPAIGN_DEMO_VIDEO_URL
+  - REACT_APP_GOOGLE_CLIENT_ID
+  - REACT_APP_GOOGLE_DEVELOPER_KEY
+  - REACT_APP_GOOGLE_PROJECT_NUMBER
+  - REACT_APP_GTM_ID
+  - REACT_APP_HT_API_HOST
+  - REACT_APP_HT_WRITE_KEY
+  - REACT_APP_HUBSPOT_FORM_ID
+  - REACT_APP_HUBSPOT_PORTAL_ID
+  - REACT_APP_INTERCOM_APP_ID
+  - REACT_APP_LD_CLIENT_ID
+  - REACT_APP_MICROSERVICES_HOST
+  - REACT_APP_MIXPANEL_PROJECT_TOKEN
+  - REACT_APP_NATIVE_DEEP_LINK_URL
+  - REACT_APP_OTP_API_BASE_URL
+  - REACT_APP_PEXELS_API_KEY
+  - REACT_APP_PROFITWELL_PUBLIC_TOKEN
+  - REACT_APP_PUBNUB_PUBLISH_KEY
+  - REACT_APP_PUBNUB_SUBSCRIBE_KEY
+  - REACT_APP_RE_CAPCHA_SITE_KEY
+  - REACT_APP_REWARDFUL_API_KEY
+  - REACT_APP_SEGMENT_KEY
+  - REACT_APP_STRIPE_PUBLIC_KEY
+  - REACT_APP_WEBINAR_HUBSPOT_CLIENT_ID
+  - REACT_APP_ZENDESK_KEY
+  - REACT_APP_STUDIO_LIVE_SESSION_API
+
+# Required GitHub Variables (non-sensitive configuration)
+required_variables:
+  - S3_BUCKET_NAME              # e.g., development.app.riverside.fm
+  - CDN_DOMAIN                  # e.g., https://dev.riverside.fm
+  - CLOUDFRONT_DISTRIBUTION_ID  # CloudFront distribution for cache invalidation
+  - ROLE_TO_ASSUME             # AWS IAM role for deployment
+  - MFE_BASE_PATH              # Base path for MFE assets (e.g., builds/mfe)
+
+# Public configuration values (safe to document)
+public_config:
+  NODE_ENV: development
+  REACT_APP_ENV: development
+  REACT_APP_APPLICATION_URL: https://dev.riverside.fm
+  REACT_APP_WEBSITE_URL: https://dev.riverside.fm
+  REACT_APP_S3_BASE_URL: https://riversidefm.s3.amazonaws.com/
+  REACT_APP_SPOTIFY_ORIGIN: https://creators.spotify.com/
+  REACT_APP_HUBSPOT_REGION: na1
+  REACT_APP_SEGMENT_EDITOR_DISABLE_GTM: 'true'
+  REACT_APP_APP_VERSION: '2.0'
+  REACT_APP_MFE_BASE_PATH: /builds/mfe
+  REACT_APP_STUDIO_LIVE_SESSION_API: https://studio-live-session.dev.riverside.fm/
+
+deployment:
+  branch: develop
+  auto_deploy: true
+  approval_required: false
+  
+notes: |
+  - This environment is used for active development and testing
+  - Deployments are automatic on push to 'develop' branch
+  - No approval required for deployments
+  - All MFEs are loaded from the development CDN

@@ -1,0 +1,46 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Disable Nx interactive mode and daemon for hooks
+export NX_DAEMON=false
+export NX_INTERACTIVE=false
+export CI=true
+
+# Skip all hooks if HUSKY=0
+if [ "$HUSKY" = "0" ]; then
+	echo "⚠️  Husky hooks are disabled (HUSKY=0)"
+	exit 0
+fi
+
+echo "🚀 Running pre-push checks..."
+
+# Test execution - the only check not performed in pre-commit
+if [ "$SKIP_TESTS" != "1" ]; then
+	echo "🧪 Running tests on affected projects..."
+
+	# Try to determine the base branch (main or master)
+	if git show-ref --verify --quiet refs/remotes/origin/main; then
+		BASE_BRANCH="origin/main"
+	elif git show-ref --verify --quiet refs/remotes/origin/master; then
+		BASE_BRANCH="origin/master"
+	else
+		# Fallback to HEAD~1 if no remote main/master
+		BASE_BRANCH="HEAD~1"
+	fi
+
+	pnpm nx affected --target=test --base=$BASE_BRANCH --head=HEAD --silent
+
+	TEST_EXIT_CODE=$?
+
+	if [ $TEST_EXIT_CODE -ne 0 ]; then
+		echo "❌ Tests failed! Please fix them before pushing."
+		echo "💡 To skip: SKIP_TESTS=1 git push"
+		exit 1
+	fi
+
+	echo "✅ Tests passed!"
+else
+	echo "⚠️  Skipping tests (SKIP_TESTS=1)"
+fi
+
+echo "✅ All pre-push checks passed! 🎉"

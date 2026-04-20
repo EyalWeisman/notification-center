@@ -1,0 +1,97 @@
+# Production Environment Configuration
+# This file documents the required environment variables for the production environment
+# DO NOT PUT ACTUAL SECRET VALUES IN THIS FILE
+
+environment:
+  name: production
+  url: https://app.riverside.fm
+  
+description: |
+  Production environment serving live customer traffic.
+  Auto-deploys from the 'main' branch with required approvals.
+
+# Required GitHub Secrets (sensitive values)
+# Production values - handle with extreme care
+required_secrets:
+  - IFRAME_SESSION_SUPPORTED
+  - REACT_APP_ABTEST_API_BASE_URL
+  - REACT_APP_API_GATEWAY_URL
+  - REACT_APP_API_GQL_URL
+  - REACT_APP_BE_ZENDESK_TOKEN
+  - REACT_APP_CENTRIFUGO_ENDPOINT
+  - REACT_APP_DEFERRED_LINK_URL
+  - REACT_APP_DIALOGER_API
+  - REACT_APP_DIALOGER_CHAT_API
+  - REACT_APP_EDIT_CAMPAIGN_DEMO_VIDEO_URL
+  - REACT_APP_GOOGLE_CLIENT_ID
+  - REACT_APP_GOOGLE_DEVELOPER_KEY
+  - REACT_APP_GOOGLE_PROJECT_NUMBER
+  - REACT_APP_GTM_ID
+  - REACT_APP_HT_API_HOST
+  - REACT_APP_HT_WRITE_KEY
+  - REACT_APP_HUBSPOT_FORM_ID
+  - REACT_APP_HUBSPOT_PORTAL_ID
+  - REACT_APP_INTERCOM_APP_ID
+  - REACT_APP_LD_CLIENT_ID  # Production LaunchDarkly client
+  - REACT_APP_MICROSERVICES_HOST
+  - REACT_APP_MIXPANEL_PROJECT_TOKEN
+  - REACT_APP_NATIVE_DEEP_LINK_URL
+  - REACT_APP_OTP_API_BASE_URL
+  - REACT_APP_PEXELS_API_KEY
+  - REACT_APP_PROFITWELL_PUBLIC_TOKEN
+  - REACT_APP_PUBNUB_PUBLISH_KEY
+  - REACT_APP_PUBNUB_SUBSCRIBE_KEY
+  - REACT_APP_RE_CAPCHA_SITE_KEY
+  - REACT_APP_REWARDFUL_API_KEY
+  - REACT_APP_SEGMENT_KEY
+  - REACT_APP_STRIPE_PUBLIC_KEY
+  - REACT_APP_WEBINAR_HUBSPOT_CLIENT_ID
+  - REACT_APP_ZENDESK_KEY
+  - REACT_APP_STUDIO_LIVE_SESSION_API
+
+# Required GitHub Variables (non-sensitive configuration)
+required_variables:
+  - S3_BUCKET_NAME              # e.g., production.app.riverside.fm
+  - CDN_DOMAIN                  # e.g., https://cdn.riverside.fm
+  - CLOUDFRONT_DISTRIBUTION_ID  # Production CloudFront distribution
+  - ROLE_TO_ASSUME             # Production AWS IAM role
+  - MFE_BASE_PATH              # Base path for MFE assets (e.g., builds/mfe)
+
+# Public configuration values (safe to document)
+public_config:
+  NODE_ENV: production
+  REACT_APP_ENV: production
+  REACT_APP_APPLICATION_URL: https://app.riverside.fm
+  REACT_APP_WEBSITE_URL: https://riverside.fm
+  REACT_APP_S3_BASE_URL: https://riversidefm.s3.amazonaws.com/
+  REACT_APP_SPOTIFY_ORIGIN: https://creators.spotify.com/
+  REACT_APP_HUBSPOT_REGION: na1
+  REACT_APP_SEGMENT_EDITOR_DISABLE_GTM: 'true'
+  REACT_APP_APP_VERSION: '2.0'
+  REACT_APP_MFE_BASE_PATH: /builds/mfe
+  REACT_APP_STUDIO_LIVE_SESSION_API: https://studio-live-session.riverside.fm/
+
+deployment:
+  branch: main
+  auto_deploy: true
+  approval_required: true
+  reviewers: 2  # Minimum 2 reviewers required
+  wait_timer: 10  # 10 minute wait before deployment (optional)
+  
+protection_rules:
+  - required_reviewers: 2
+  - dismiss_stale_reviews: true
+  - require_code_owner_reviews: true
+  - restrict_dismissals: true
+  
+rollback:
+  strategy: feature_flag  # Use LaunchDarkly for instant rollback
+  fallback_versions: true  # Keep previous versions available
+  
+notes: |
+  - Production environment with live customer traffic
+  - Requires 2 reviewers for deployment approval
+  - Optional 10 minute wait timer for emergency intervention
+  - Deployments trigger from 'main' branch only
+  - Full monitoring and alerting enabled
+  - Rollback via LaunchDarkly feature flags

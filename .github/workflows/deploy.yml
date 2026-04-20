@@ -1,0 +1,52 @@
+# 🚨 TEMPLATE FILE - DO NOT USE AS-IS 🚨
+# This is a template showing how to use the shared MFE deployment workflow.
+# Uncomment and configure the sections below for your actual deployment needs.
+
+name: Deploy MFEs
+
+on:
+  push:
+    branches: [main, staging, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+        default: development
+      force-deploy-all:
+        description: 'Force deploy all MFEs'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Deploy MFEs
+    # 🚨 TEMPLATE: This workflow is commented out to prevent accidental deployments
+    # Uncomment the line below and configure your secrets to enable deployments
+    if: false # 🚨 Remove this line to enable deployments
+    uses: riversidefm/github-actions/.github/workflows/mfe-deploy-v2.yml@main
+    with:
+      base-branch: ${{ github.event.before == '0000000000000000000000000000000000000000' && 'main' || 'origin/main' }}
+      head-branch: HEAD
+      node-version: '22'
+      environment: ${{
+        github.event_name == 'workflow_dispatch' && github.event.inputs.environment ||
+        github.ref == 'refs/heads/main' && 'production' ||
+        github.ref == 'refs/heads/staging' && 'staging' || 'development' }}
+      force-deploy-all: ${{ github.event.inputs.force-deploy-all == 'true' || false }}
+      skip-version-analysis: false
+    secrets: inherit
+      ## 🚨 TEMPLATE: Configure these secrets in your repository settings
+      # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # AWS_REGION: ${{ secrets.AWS_REGION }}
+      ## LaunchDarkly (optional)
+      # REACT_APP_LD_CLIENT_ID: ${{ secrets.REACT_APP_LD_CLIENT_ID }}
+      ## API Endpoints (customize for your needs)
+      #REACT_APP_API_GATEWAY_URL: ${{ secrets.REACT_APP_API_GATEWAY_URL }}
+      # REACT_APP_API_GQL_URL: ${{ secrets.REACT_APP_API_GQL_URL }}

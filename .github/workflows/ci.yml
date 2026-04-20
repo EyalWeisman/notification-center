@@ -1,0 +1,23 @@
+# 🚨 TEMPLATE FILE 🚨
+# This template shows how to set up CI for MFE projects using shared workflows.
+# This workflow is safe to enable as-is (it only runs tests and builds, no deployments).
+
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ci:
+    name: MFE Continuous Integration
+    uses: riversidefm/github-actions/.github/workflows/mfe-ci.yml@main
+    with:
+      # 🚨 TEMPLATE: Customize these inputs for your project
+      node-version: '22'
+      skip-build: false # Set to true if you want to skip build validation
+    secrets:
+      # 🚨 TEMPLATE: Configure NPM_TOKEN secret in your repository settings
+      # This is required for private npm packages
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
