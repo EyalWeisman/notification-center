@@ -1,7 +1,3 @@
-# 🚨 TEMPLATE FILE - DO NOT USE AS-IS 🚨
-# This template shows how to set up PR preview deployments for MFE projects.
-# Uncomment and configure the sections below for your actual PR deployments.
-
 name: PR Preview Deploy
 
 on:
@@ -12,10 +8,7 @@ on:
 jobs:
   pr-preview:
     name: Deploy PR Preview
-    # 🚨 TEMPLATE: This workflow is commented out to prevent accidental deployments
-    # Uncomment the line below and configure your secrets to enable PR deployments
-    if: false # 🚨 Remove this line to enable PR deployments
-    uses: riversidefm/github-actions/.github/workflows/mfe-pr-deploy-v2.yml@main
-    with:
-      pr-number: ${{ github.event.pull_request.number }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    if: false # Disabled until deployment infrastructure is configured
+    steps:
+      - run: echo "PR preview deployment not configured yet"
