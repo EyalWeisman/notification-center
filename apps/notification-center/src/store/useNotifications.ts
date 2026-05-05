@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useQuery, useMutation } from '@riversidefm/client-graphql';
-import { useUserData } from '@riversidefm/state-management';
 import { useNotificationDispatch, useNotificationSelector } from './notification.store';
 import { notificationActions } from './notification.slice';
 import { mapRecordingsToNotifications } from './notification.mapper';
@@ -9,7 +8,7 @@ import { deriveTrackState } from '../types/notification.types';
 import type { RecordingNotification } from '../types/notification.types';
 import {
 	NOTIFICATIONS_QUERY,
-	MARK_AS_READ_MUTATION,
+	MARK_SEEN_MUTATION,
 	DISMISS_NOTIFICATIONS_MUTATION,
 	DISMISS_ALL_MUTATION,
 } from '../graphql/queries';
@@ -28,13 +27,10 @@ export function useNotifications() {
 	const dispatch = useNotificationDispatch();
 	const { open, leavingIds, enteringIds } = useNotificationSelector((state) => state.notifications);
 
-	const userData = useUserData();
-	const accountId = userData?.id;
-
 	const { data, refetch } = useQuery<NotificationsResponse>(
 		NOTIFICATIONS_QUERY,
-		{ accountId },
-		{ enabled: !!accountId }
+		{},
+		{}
 	);
 
 	const typedData = data as NotificationsResponse | undefined;
@@ -80,7 +76,7 @@ export function useNotifications() {
 		[notifications]
 	);
 
-	const { mutate: markAsReadMutation } = useMutation(MARK_AS_READ_MUTATION);
+	const { mutate: markSeenMutation } = useMutation(MARK_SEEN_MUTATION);
 	const { mutate: dismissMutation } = useMutation(DISMISS_NOTIFICATIONS_MUTATION);
 	const { mutate: dismissAllMutation } = useMutation(DISMISS_ALL_MUTATION);
 
@@ -88,11 +84,11 @@ export function useNotifications() {
 	openRef.current = open;
 
 	const toggle = useCallback(() => {
-		if (!openRef.current && accountId) {
-			markAsReadMutation({ accountId });
+		if (!openRef.current) {
+			markSeenMutation({}, { onSuccess: () => refetch() });
 		}
 		dispatch(notificationActions.toggle());
-	}, [dispatch, accountId, markAsReadMutation]);
+	}, [dispatch, markSeenMutation, refetch]);
 
 	const close = useCallback(() => {
 		dispatch(notificationActions.close());
@@ -132,22 +128,20 @@ export function useNotifications() {
 
 			setTimeout(() => {
 				dispatch(notificationActions.finishDismiss(cardId));
-				if (accountId && archiveIds.length > 0) {
+				if (archiveIds.length > 0) {
 					dismissMutation(
-						{ accountId, archiveIds },
+						{ archiveIds },
 						{ onSuccess: () => refetch() }
 					);
 				}
 			}, DISMISS_ANIMATION_MS);
 		},
-		[dispatch, accountId, getArchiveIdsForDismiss, dismissMutation, refetch]
+		[dispatch, getArchiveIdsForDismiss, dismissMutation, refetch]
 	);
 
 	const markAllAsRead = useCallback(() => {
-		if (accountId) {
-			markAsReadMutation({ accountId });
-		}
-	}, [accountId, markAsReadMutation]);
+		markSeenMutation({}, { onSuccess: () => refetch() });
+	}, [markSeenMutation, refetch]);
 
 	const clearAll = useCallback(() => {
 		const allIds = notifications.map((n) => n.id);
@@ -155,11 +149,9 @@ export function useNotifications() {
 
 		setTimeout(() => {
 			dispatch(notificationActions.finishClearAll());
-			if (accountId) {
-				dismissAllMutation({ accountId }, { onSuccess: () => refetch() });
-			}
+			dismissAllMutation({}, { onSuccess: () => refetch() });
 		}, CLEAR_ALL_ANIMATION_MS);
-	}, [dispatch, notifications, accountId, dismissAllMutation, refetch]);
+	}, [dispatch, notifications, dismissAllMutation, refetch]);
 
 	return {
 		notifications,

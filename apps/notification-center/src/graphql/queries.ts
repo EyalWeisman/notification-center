@@ -1,6 +1,6 @@
 export const NOTIFICATIONS_QUERY = `
-  query Notifications($accountId: ID!) {
-    notifications(accountId: $accountId) {
+  query Notifications {
+    notifications {
       notifications {
         id
         recording {
@@ -20,20 +20,20 @@ export const NOTIFICATIONS_QUERY = `
   }
 `;
 
-export const MARK_AS_READ_MUTATION = `
-  mutation MarkNotificationsAsRead($accountId: ID!) {
-    markNotificationsAsRead(accountId: $accountId)
+export const MARK_SEEN_MUTATION = `
+  mutation MarkNotificationsSeen {
+    markNotificationsSeen
   }
 `;
 
 export const DISMISS_NOTIFICATIONS_MUTATION = `
-  mutation DismissNotifications($accountId: ID!, $archiveIds: [ID!]!) {
-    dismissNotifications(accountId: $accountId, archiveIds: $archiveIds)
+  mutation DismissNotifications($archiveIds: [ID!]!) {
+    dismissNotifications(archiveIds: $archiveIds)
   }
 `;
 
 export const DISMISS_ALL_MUTATION = `
-  mutation DismissAllNotifications($accountId: ID!) {
-    dismissAllNotifications(accountId: $accountId)
+  mutation DismissAllNotifications {
+    dismissAllNotifications
   }
 `;
