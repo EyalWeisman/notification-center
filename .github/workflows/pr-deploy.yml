@@ -14,7 +14,6 @@ jobs:
     name: Deploy PR Preview
     # 🚨 TEMPLATE: This workflow is commented out to prevent accidental deployments
     # Uncomment the line below and configure your secrets to enable PR deployments
-    if: false # 🚨 Remove this line to enable PR deployments
     uses: riversidefm/github-actions/.github/workflows/mfe-pr-deploy-v2.yml@main
     with:
       pr-number: ${{ github.event.pull_request.number }}

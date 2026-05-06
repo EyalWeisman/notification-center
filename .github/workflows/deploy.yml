@@ -29,7 +29,6 @@ jobs:
     name: Deploy MFEs
     # 🚨 TEMPLATE: This workflow is commented out to prevent accidental deployments
     # Uncomment the line below and configure your secrets to enable deployments
-    if: false # 🚨 Remove this line to enable deployments
     uses: riversidefm/github-actions/.github/workflows/mfe-deploy-v2.yml@main
     with:
       base-branch: ${{ github.event.before == '0000000000000000000000000000000000000000' && 'main' || 'origin/main' }}
